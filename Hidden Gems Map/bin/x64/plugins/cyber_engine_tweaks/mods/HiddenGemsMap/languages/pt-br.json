@@ -1,0 +1,16 @@
+{
+    "Tab": "Mapa das Joias Escondidas",
+    "Subcategory": "Configurações",
+    "DisableLabel": "Desativar mod",
+    "DisableDesc": "Desativa as rotinas do mod.",
+    "LogLabel": "Nível de registro",
+    "LogDesc": "Define o nível de detalhamento das ferramentas de criação de log. O nível padrão é sem registro e não tem impacto no desempenho. As opções 'Criação de alfinetes' e 'Tomada de decisão' serão registradas em um arquivo chamado 'console.log' salvo no diretório do mod. Os arquivos de log são substituídos a cada reinicialização do mod.",
+    "Default": "Padrão",
+    "Load": "Carregamento do mod",
+    "Pins": "Criação de alfinetes",
+    "Decisions": "Tomada de decisão",
+    "FreqLabel": "Frequência de atualização",
+    "FreqDesc": "Define o tempo entre o ciclo de atualização do mapa em segundos. O padrão é 15 segundos, mas pode ser aumentado para melhorar o desempenho geral do jogo, se necessário.",
+    "TermLabel": "Terminais de dados da Militech",
+    "TermDesc": "Oculta ou exibe os terminais de dados da Militech no mapa."
+}
