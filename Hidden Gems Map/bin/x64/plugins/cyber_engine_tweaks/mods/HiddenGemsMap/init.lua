@@ -142,7 +142,6 @@ function HiddenGemsMap:new()
             end)
             GameUI.Listen(function(state)
                 if not self.settings.disable then
-                    GameUI.PrintState(state)
                      local event = GameUI.ExportState(state)
                     if (event:find('event = "WheelOpen"')) then
                         self.pause()
