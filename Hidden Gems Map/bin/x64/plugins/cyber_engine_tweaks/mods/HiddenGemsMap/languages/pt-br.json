@@ -1,16 +1,16 @@
 {
-    "Tab": "Mapa das Joias Escondidas",
+    "Tab": "Mapa de Joias Escondidas",
     "Subcategory": "Configurações",
-    "DisableLabel": "Desativar mod",
+    "DisableLabel": "Desativar modificação",
     "DisableDesc": "Desativa as rotinas do mod.",
     "LogLabel": "Nível de registro",
-    "LogDesc": "Define o nível de detalhamento das ferramentas de criação de log. O nível padrão é sem registro e não tem impacto no desempenho. As opções 'Criação de alfinetes' e 'Tomada de decisão' serão registradas em um arquivo chamado 'console.log' salvo no diretório do mod. Os arquivos de log são substituídos a cada reinicialização do mod.",
+    "LogDesc": "Define o nível detalhado das ferramentas de criação de log apenas para fins de depuração. Não altere esta configuração a menos que queira monitorar as rotinas do mod. O nível 'Padrão' não gera registro e não tem impacto no desempenho. As opções 'Criação de pin' e 'Tomada de decisão' serão registradas em um arquivo chamado 'console.log' salvo no diretório do mod. Os arquivos de log são substituídos a cada reinicialização do mod.",
     "Default": "Padrão",
-    "Load": "Carregamento do mod",
-    "Pins": "Criação de alfinetes",
-    "Decisions": "Tomada de decisão",
+    "Load": "Carregamento de mod",
+    "Pins": "Criação de pinos",
+    "Decisions": "Tomar decisões",
     "FreqLabel": "Frequência de atualização",
-    "FreqDesc": "Define o tempo entre o ciclo de atualização do mapa em segundos. O padrão é 15 segundos, mas pode ser aumentado para melhorar o desempenho geral do jogo, se necessário.",
+    "FreqDesc": "Define a quantidade de tempo entre o ciclo de atualização do mapa em segundos. O padrão é 15 segundos, mas pode ser aumentado para o bem do desempenho geral do jogo, se necessário.",
     "TermLabel": "Terminais de dados da Militech",
     "TermDesc": "Oculta ou exibe os terminais de dados da Militech no mapa."
 }
