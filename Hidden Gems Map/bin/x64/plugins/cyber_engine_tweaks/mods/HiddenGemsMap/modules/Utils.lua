@@ -55,7 +55,7 @@ function Utils.isNearPosition(p1, p2, radius, zradius)
 end
 
 ---comment
----@param title any
+---@param title integer
 function Utils.notify(title)
 	local blackboardDefs = Game.GetAllBlackboardDefs()
 	local blackboardUI = Game.GetBlackboardSystem():Get(blackboardDefs.UI_Notifications)

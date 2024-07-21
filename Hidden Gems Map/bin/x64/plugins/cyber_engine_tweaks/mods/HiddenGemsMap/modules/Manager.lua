@@ -3,8 +3,6 @@ local Logging = require('modules/Logging')
 local Utils = require('modules/Utils')
 local Vars = require('modules/Vars')
 
-local clear = false
-
 local Manager = {}
 
 ---comment
