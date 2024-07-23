@@ -11,6 +11,6 @@
     "Decisions": "Rozhodování",
     "FreqLabel": "Frekvence aktualizace",
     "FreqDesc": "Nastavuje dobu mezi cykly aktualizace mapy v sekundách. Výchozí hodnota je 15 sekund, ale v případě potřeby ji lze zvýšit kvůli celkovému výkonu hry.",
-    "TermLabel": "Datové terminály společnosti Militech",
-    "TermDesc": "Skryje nebo zobrazí datové terminály Militech na mapě."
+    "Concealable": "Skryté",
+    "ShowDesc": "Zobrazit nebo skrýt %s na mapě."
 }

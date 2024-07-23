@@ -11,6 +11,6 @@
     "Decisions": "Toma de decisiones",
     "FreqLabel": "Frecuencia de actualización",
     "FreqDesc": "Establece la cantidad de tiempo entre el ciclo de actualización del mapa en segundos. El valor predeterminado es 15 segundos, pero se puede aumentar por el bien del rendimiento general del juego si es necesario.",
-    "TermLabel": "Terminales de datos de Militech",
-    "TermDesc": "Oculta o muestra las terminales de datos de Militech en el mapa."
+    "Concealable": "Ocultable",
+    "ShowDesc": "Muestra u oculta los %s en el mapa."
 }

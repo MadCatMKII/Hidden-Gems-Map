@@ -1,6 +1,6 @@
 {
     "Tab": "Hidden Gems Map",
-    "Subcategory": "Settings",
+    "Settings": "Settings",
     "DisableLabel": "Disable mod",
     "DisableDesc": "Disables the mod's routines.",
     "LogLabel": "Logging level",
@@ -11,6 +11,6 @@
     "Decisions": "Decision make",
     "FreqLabel": "Update frequency",
     "FreqDesc": "Sets the amount of time between the map update cycle in seconds. The default is 15 seconds, but it can be increased for the sake of the game overall performance if required.",
-    "TermLabel": "Militech's data terminals",
-    "TermDesc": "Hides or unhides the Militech's data terminals on the map."
+    "Concealable": "Concealable",
+    "ShowDesc": "Show or hide the %s on the map."
 }

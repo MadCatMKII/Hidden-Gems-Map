@@ -11,6 +11,6 @@
     "Decisions": "做出决策",
     "FreqLabel": "更新频率",
     "FreqDesc": "设置地图更新周期的时间间隔（以秒为单位）。默认值为 15 秒，但如果需要，可以为了游戏整体性能而增加该时间间隔。",
-    "TermLabel": "Militech 的数据终端",
-    "TermDesc": "在地图上隐藏或取消隐藏 Militech 的数据终端。"
+    "Concealable": "可隐藏",
+    "ShowDesc": "在地图上显示或隐藏 %s。"
 }

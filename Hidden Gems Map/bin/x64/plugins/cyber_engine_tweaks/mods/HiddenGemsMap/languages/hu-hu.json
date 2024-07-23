@@ -11,6 +11,6 @@
     "Decisions": "Döntéshozatal",
     "FreqLabel": "Frissítési gyakoriság",
     "FreqDesc": "Beállítja a térképfrissítési ciklusok közötti időt másodpercekben. Az alapértelmezett 15 másodperc, de szükség esetén növelhető a játék teljes teljesítménye érdekében.",
-    "TermLabel": "A Militech adattermináljai",
-    "TermDesc": "Elrejti vagy felfedi a Militech adattermináljait a térképen."
+    "Concealable": "Elrejthető",
+    "ShowDesc": "A %s megjelenítése vagy elrejtése a térképen."
 }

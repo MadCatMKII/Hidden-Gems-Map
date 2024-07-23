@@ -11,6 +11,6 @@
     "Decisions": "決策制定",
     "FreqLabel": "更新頻率",
     "FreqDesc": "設定地圖更新周期之間的時間量（以秒為單位）。預設值為 15 秒，但如果需要，可以為了遊戲整體效能而增加該值。",
-    "TermLabel": "Militech 的資料終端",
-    "TermDesc": "在地圖上隱藏或取消隱藏 Militech 的資料終端。"
+    "Concealable": "可隱藏",
+    "ShowDesc": "在地圖上顯示或隱藏 %s。"
 }

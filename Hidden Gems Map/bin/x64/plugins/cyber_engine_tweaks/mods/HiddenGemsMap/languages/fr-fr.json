@@ -11,6 +11,6 @@
     "Decisions": "Prise de décision",
     "FreqLabel": "Fréquence de mise à jour",
     "FreqDesc": "Définit la durée entre les cycles de mise à jour de la carte, en secondes. La valeur par défaut est de 15 secondes, mais elle peut être augmentée pour le bien des performances globales du jeu si nécessaire.",
-    "TermLabel": "Les terminaux de données de Militech",
-    "TermDesc": "Masque ou affiche les terminaux de données de Militech sur la carte."
+    "Concealable": "Dissimulable",
+    "ShowDesc": "Afficher ou masquer le %s sur la carte."
 }

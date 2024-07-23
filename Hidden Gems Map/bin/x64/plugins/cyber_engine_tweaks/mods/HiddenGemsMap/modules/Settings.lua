@@ -11,7 +11,52 @@ function Settings.setup(main)
     local NativeSettings = GetMod('nativeSettings')
     local texts = Utils.readJson(string.format('languages/%s.json', Vars.language))
     local tab = '/main'
-    local subcategory = '/main/Settings'
+    local subSettings = '/main/Settings'
+    local subConcealable = '/main/Concealable'
+    local tags = {
+        'dev_easter_egg',
+        'dev_room_01',
+        'card_player_robots',
+        'button_easter_egg',
+        'ep1_growl',
+        'mws_se5_03_game_started',
+        'blade_runner_easter_egg',
+        'wst_cat_dtn_01_scene',
+        'dev_room_02',
+        'mdt_ep1_barghest_base',
+        'mdt_ep1_barricade',
+        'mdt_ep1_brainporium',
+        'mdt_ep1_kress_street',
+        'mdt_ep1_luxor_high_wellness_spa',
+        'mdt_ep1_overpass',
+        'mdt_ep1_parking_garage',
+        'mdt_ep1_stadium',
+        'mdt_ep1_terra_cognita',
+        'wst_cat_ep1_01_scene'
+    }
+
+    ---comment
+    function Settings.refresh()
+	    NativeSettings.refresh()
+    end
+
+    ---comment
+    ---@param tag string
+    ---@return string
+    function Settings.getTitle(tag)
+	    for _, gem in pairs(Vars.gems) do
+            if gem.tag == tag then
+			    return gem.title
+		    end
+        end
+    end
+
+    ---comment
+    ---@param tag string
+    ---@return string
+    function Settings.getDesc(tag)
+        return string.format(texts.ShowDesc, Settings.getTitle(tag))
+    end
 
     local cet = tonumber((GetVersion():gsub('^v(%d+)%.(%d+)%.(%d+)(.*)', function(major, minor, patch, wip)
         return ('%d.%02d%02d%d'):format(major, minor, patch, (wip == '' and 0 or 1))
@@ -27,7 +72,7 @@ function Settings.setup(main)
     end
 
     local settings = Utils.readJson(main.filename)
-    if settings ~= nil then
+    if settings ~= nil and settings.concealable ~= nil and #settings.concealable == #tags then
         for key, _ in pairs(settings) do
             if settings[key] ~= nil then
                 main.settings[key] = settings[key]
@@ -37,23 +82,21 @@ function Settings.setup(main)
     else
         Settings.save(main)
 	end
+
     local disable = main.settings.disable
     local debug = main.settings.debug
     local frequency = main.settings.frequency
-    local terminals = main.settings.terminals
+    local concealable = main.settings.concealable
 
     if texts ~= nil then
-        if not NativeSettings.pathExists(tab) then
-            NativeSettings.addTab(tab, texts.Tab)
+        NativeSettings.addTab(tab, texts.Tab)
+
+        if NativeSettings.pathExists(subSettings) then
+            NativeSettings.removeSubcategory(subSettings)
         end
+        NativeSettings.addSubcategory(subSettings, texts.Settings)
 
-        if NativeSettings.pathExists(subcategory) then
-            NativeSettings.removeSubcategory(subcategory)
-        end
-
-        NativeSettings.addSubcategory(subcategory, texts.Subcategory)
-
-        NativeSettings.addSwitch(subcategory, texts.DisableLabel, texts.DisableDesc, disable, false, function(state)
+        NativeSettings.addSwitch(subSettings, texts.DisableLabel, texts.DisableDesc, disable, false, function(state)
             disable = state
             if disable then
                 Manager.clearPins()
@@ -70,25 +113,34 @@ function Settings.setup(main)
         end)
 
         local list = {[1] = texts.Default, [2] = texts.Load, [3] = texts.Pins, [4] = texts.Decisions}
-        NativeSettings.addSelectorString(subcategory, texts.LogLabel, texts.LogDesc, list, debug, 1, function(value)
+        NativeSettings.addSelectorString(subSettings, texts.LogLabel, texts.LogDesc, list, debug, 1, function(value)
             debug = value
             main.settings.debug = debug
             Settings.save(main)
         end)
 
-        NativeSettings.addRangeInt(subcategory, texts.FreqLabel, texts.FreqDesc, 15, 60, 1, frequency, 5, function(value)
+        NativeSettings.addRangeInt(subSettings, texts.FreqLabel, texts.FreqDesc, 15, 60, 1, frequency, 5,
+         function(value)
             frequency = value
             main.changed = true
             main.settings.frequency = frequency
             Settings.save(main)
         end)
 
-        NativeSettings.addSwitch(subcategory, texts.TermLabel, texts.TermDesc, terminals, true, function(state)
-            terminals = state
-            main.settings.terminals = terminals
-            Manager.updatePins()
-            Settings.save(main)
-        end)
+        if NativeSettings.pathExists(subConcealable) then
+            NativeSettings.removeSubcategory(subConcealable)
+        end
+        NativeSettings.addSubcategory(subConcealable, texts.Concealable)
+
+        for i = 1, #tags, 1 do
+            NativeSettings.addSwitch(subConcealable, Settings.getTitle(tags[i]), Settings.getDesc(tags[i]),
+                concealable[i], true, function(state)
+                    concealable[i] = state
+                    main.settings.concealable = concealable
+                    Manager.updatePins()
+                    Settings.save(main)
+            end)
+        end
     end
 end
 

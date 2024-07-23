@@ -11,6 +11,6 @@
     "Decisions": "Entscheidung treffen",
     "FreqLabel": "Aktualisierungsfrequenz",
     "FreqDesc": "Legt die Zeitspanne zwischen den Kartenaktualisierungszyklen in Sekunden fest. Der Standardwert beträgt 15 Sekunden, kann aber bei Bedarf zur Verbesserung der Gesamtleistung des Spiels erhöht werden.",
-    "TermLabel": "Datenterminals von Militech",
-    "TermDesc": "Blendet die Datenterminals von Militech auf der Karte aus oder zeigt sie an."
+    "Concealable": "Versteckbar",
+    "ShowDesc": "%s auf der Karte ein- oder ausblenden."
 }

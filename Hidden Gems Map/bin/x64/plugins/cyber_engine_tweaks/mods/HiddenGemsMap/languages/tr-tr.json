@@ -11,6 +11,6 @@
     "Decisions": "Karar verme",
     "FreqLabel": "Güncelleme sıklığı",
     "FreqDesc": "Harita güncelleme döngüsü arasındaki süreyi saniye cinsinden ayarlar. Varsayılan süre 15 saniyedir ancak gerekirse oyunun genel performansı açısından bu süre artırılabilir.",
-    "TermLabel": "Militech'in veri terminalleri",
-    "TermDesc": "Militech'in veri terminallerini haritada gizler veya gösterir."
+    "Concealable": "Gizlenebilir",
+    "ShowDesc": "Haritada %s'yi gösterin veya gizleyin."
 }

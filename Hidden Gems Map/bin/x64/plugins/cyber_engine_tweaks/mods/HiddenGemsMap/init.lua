@@ -8,7 +8,7 @@ local Settings = require('modules/Settings')
 local Vars = require('modules/Vars')
 
 local HiddenGemsMap = {
-    version = '1.0.3',
+    version = '1.1.1',
     cet = 1.32,
     filename = 'settings.json',
     logname = 'console.log',
@@ -23,8 +23,28 @@ local HiddenGemsMap = {
         debug = 1,
         -- Sets the map update frequency cycle in seconds
         frequency = 15.0,
-        -- Sets the hide or unhide of Militech data terminals
-        terminals = true
+        -- Sets the hide or unhide of specific pins
+        concealable = {
+            true, -- 1 - Dev Sightseeing Point
+            true, -- 2 - Dev Room Kabuki
+            true, -- 3 - Card Player Robots
+            true, -- 4 - Chapter Hill Red Button
+            true, -- 5 - Growl FM Party
+            true, -- 6 - Arasaka Tower 3D
+            true, -- 7 - Blade Runner Easter Egg
+            true, -- 8 - Downtown's Cat
+            true, -- 9 - Arasaka Memorial
+            true, -- 10 - Barghest Base Data Terminal
+            true, -- 11 - Barricade Data Terminal
+            true, -- 12 - Brainporium Data Terminal
+            true, -- 13 - Kress Street Data Terminal
+            true, -- 14 - Luxor High Wellness Spa Data Terminal
+            true, -- 15 - Overpass Data Terminal
+            true, -- 16 - Parking Garage Data Terminal
+            true, -- 17 - Stadium Data Terminal
+            true, -- 18 - Terra Cognita Data Terminal
+            true  -- 19 - Dogtown's Cat
+        }
     }
 }
 
@@ -151,8 +171,15 @@ function HiddenGemsMap:new()
                         self.resume()
                     elseif (event:find('event = "PopupClose"')) then
                         self.resume()
+                    elseif (event:find('event = "MenuClose"')) and (event:find('lastMenu = "Hub"')) then
+                        self.reloaded = true
+                        self.resume()
                     elseif (event:find('event = "MenuClose"')) and (event:find('lastMenu = "MainMenu"')) then
                         self.loadData()
+                    elseif (event:find('event = "MenuNav"')) and (event:find('lastSubmenu = "Settings"')) then
+                        self.loadData()
+                        Settings.setup(self)
+                        Settings.refresh()
                     end
                 end
             end)
