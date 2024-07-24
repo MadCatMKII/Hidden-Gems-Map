@@ -123,7 +123,7 @@ function Manager.updatePin(gem, create, remove, setting)
     if remove and #gem.logic.goals > 0 then
         if Manager.existPinbyTag(gem.tag) then
             Manager.removePinByTag(gem.tag)
-            if not setting then
+            if not setting and not Vars.clear then
                 Utils.notify(gem.title)
             end
         end
@@ -153,7 +153,9 @@ function Manager.schedulePins()
         local remove = true
         local setting = false
         local id = Cron.After(delay, function ()
-            Manager.updatePin(gem, create, remove, setting)
+            if not Vars.clear then
+                Manager.updatePin(gem, create, remove, setting)
+            end
         end, { tick = 1 })
         delay = delay + unit
         Vars.timers[id] = id
@@ -162,10 +164,11 @@ end
 
 ---comment
 function Manager.clearPins()
-    Cron.Halt(Vars.ticker)
+    Vars.clear = true
     for _, timer in pairs(Vars.timers) do
         Cron.Halt(timer)
     end
+    Cron.Halt(Vars.ticker)
     for _, pin in pairs(Vars.pins) do
         Manager.removePinByTag(pin.tag)
     end

@@ -9,30 +9,30 @@ local Settings = {}
 ---@param main any
 function Settings.setup(main)
     local NativeSettings = GetMod('nativeSettings')
-    local texts = Utils.readJson(string.format('languages/%s.json', Vars.language))
+    local loc = Vars.localization
     local tab = '/main'
     local subSettings = '/main/Settings'
     local subConcealable = '/main/Concealable'
     local tags = {
-        'dev_easter_egg',
-        'dev_room_01',
-        'card_player_robots',
-        'button_easter_egg',
-        'ep1_growl',
-        'mws_se5_03_game_started',
-        'blade_runner_easter_egg',
-        'wst_cat_dtn_01_scene',
-        'dev_room_02',
-        'mdt_ep1_barghest_base',
-        'mdt_ep1_barricade',
-        'mdt_ep1_brainporium',
-        'mdt_ep1_kress_street',
-        'mdt_ep1_luxor_high_wellness_spa',
-        'mdt_ep1_overpass',
-        'mdt_ep1_parking_garage',
-        'mdt_ep1_stadium',
-        'mdt_ep1_terra_cognita',
-        'wst_cat_ep1_01_scene'
+        'dev_easter_egg',-- 1 - Dev Sightseeing Point
+        'dev_room_01', -- 2 - Dev Room Kabuki
+        'card_player_robots', -- 3 - Card Player Robots
+        'button_easter_egg', -- 4 - Chapter Hill Red Button
+        'ep1_growl', -- 5 - Growl FM Party
+        'mws_se5_03_game_started', -- 6 - Arasaka Tower 3D
+        'blade_runner_easter_egg', -- 7 - Blade Runner Easter Egg
+        'wst_cat_dtn_01_scene', -- 8 - Downtown's Cat
+        'dev_room_02', -- 9 - Arasaka Memorial
+        'mdt_ep1_barghest_base', -- 10 - Barghest Base Data Terminal
+        'mdt_ep1_barricade', -- 11 - Barricade Data Terminal
+        'mdt_ep1_brainporium', -- 12 - Brainporium Data Terminal
+        'mdt_ep1_kress_street', -- 13 - Kress Street Data Terminal
+        'mdt_ep1_luxor_high_wellness_spa', -- 14 - Luxor High Wellness Spa Data Terminal
+        'mdt_ep1_overpass', -- 15 - Overpass Data Terminal
+        'mdt_ep1_parking_garage',  -- 16 - Parking Garage Data Terminal
+        'mdt_ep1_stadium', -- 17 - Stadium Data Terminal
+        'mdt_ep1_terra_cognita', -- 18 - Terra Cognita Data Terminal
+        'wst_cat_ep1_01_scene' -- 19 - Dogtown's Cat
     }
 
     ---comment
@@ -55,7 +55,7 @@ function Settings.setup(main)
     ---@param tag string
     ---@return string
     function Settings.getDesc(tag)
-        return string.format(texts.ShowDesc, Settings.getTitle(tag))
+        return string.format(loc.ShowDesc, Settings.getTitle(tag))
     end
 
     local cet = tonumber((GetVersion():gsub('^v(%d+)%.(%d+)%.(%d+)(.*)', function(major, minor, patch, wip)
@@ -88,49 +88,54 @@ function Settings.setup(main)
     local frequency = main.settings.frequency
     local concealable = main.settings.concealable
 
-    if texts ~= nil then
-        NativeSettings.addTab(tab, texts.Tab)
+    if loc ~= nil then
+        NativeSettings.addTab(tab, loc.Tab)
 
         if NativeSettings.pathExists(subSettings) then
             NativeSettings.removeSubcategory(subSettings)
         end
-        NativeSettings.addSubcategory(subSettings, texts.Settings)
+        NativeSettings.addSubcategory(subSettings, loc.Subcategory)
 
-        NativeSettings.addSwitch(subSettings, texts.DisableLabel, texts.DisableDesc, disable, false, function(state)
-            disable = state
-            if disable then
-                Manager.clearPins()
-                Logging.conclude('Closing log...')
-                Logging.console('Mod disabled.', 2)
-            else
-                Logging.create('Starting log...\n')
-                Logging.console('Mod loaded.', 2)
-                Manager.updatePins()
-                Logging.console('Mod initialized.', 2)
+        NativeSettings.addSwitch(subSettings, loc.DisableLabel, loc.DisableDesc, disable, false,
+            function(state)
+                disable = state
+                if disable then
+                    Manager.clearPins()
+                    Logging.conclude('Closing log...')
+                    Logging.console('Mod disabled.', 2)
+                else
+                    Logging.create('Starting log...\n')
+                    Logging.console('Mod loaded.', 2)
+                    Manager.updatePins()
+                    Logging.console('Mod initialized.', 2)
+                end
+                main.settings.disable = disable
+                Settings.save(main)
             end
-            main.settings.disable = disable
-            Settings.save(main)
-        end)
+        )
 
-        local list = {[1] = texts.Default, [2] = texts.Load, [3] = texts.Pins, [4] = texts.Decisions}
-        NativeSettings.addSelectorString(subSettings, texts.LogLabel, texts.LogDesc, list, debug, 1, function(value)
-            debug = value
-            main.settings.debug = debug
-            Settings.save(main)
-        end)
+        local list = {[1] = loc.Default, [2] = loc.Load, [3] = loc.Pins, [4] = loc.Decisions}
+        NativeSettings.addSelectorString(subSettings, loc.LogLabel, loc.LogDesc, list, debug, 1,
+            function(value)
+                debug = value
+                main.settings.debug = debug
+                Settings.save(main)
+            end
+        )
 
-        NativeSettings.addRangeInt(subSettings, texts.FreqLabel, texts.FreqDesc, 15, 60, 1, frequency, 5,
-         function(value)
-            frequency = value
-            main.changed = true
-            main.settings.frequency = frequency
-            Settings.save(main)
-        end)
+        NativeSettings.addRangeInt(subSettings, loc.FreqLabel, loc.FreqDesc, 15, 60, 1, frequency, 5,
+            function(value)
+                frequency = value
+                main.changed = true
+                main.settings.frequency = frequency
+                Settings.save(main)
+            end
+        )
 
         if NativeSettings.pathExists(subConcealable) then
             NativeSettings.removeSubcategory(subConcealable)
         end
-        NativeSettings.addSubcategory(subConcealable, texts.Concealable)
+        NativeSettings.addSubcategory(subConcealable, loc.Concealable)
 
         for i = 1, #tags, 1 do
             NativeSettings.addSwitch(subConcealable, Settings.getTitle(tags[i]), Settings.getDesc(tags[i]),

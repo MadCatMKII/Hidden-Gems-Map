@@ -59,7 +59,7 @@ end
 function Utils.notify(title)
 	local blackboardDefs = Game.GetAllBlackboardDefs()
 	local blackboardUI = Game.GetBlackboardSystem():Get(blackboardDefs.UI_Notifications)
-	local text = Vars.texts[2][Vars.language]
+	local text = Vars.texts[2]
 	local message = SimpleScreenMessage.new()
 	message.message = string.format(text, title)
 	message.isShown = true

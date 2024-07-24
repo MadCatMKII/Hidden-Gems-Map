@@ -1,5 +1,4 @@
 local Cron = require('external/Cron')
-local GameSession = require('external/GameSession')
 local GameUI = require('external/GameUI')
 local Logging = require('modules/Logging')
 local Manager = require('modules/Manager')
@@ -8,7 +7,7 @@ local Settings = require('modules/Settings')
 local Vars = require('modules/Vars')
 
 local HiddenGemsMap = {
-    version = '1.1.1',
+    version = '1.2.0',
     cet = 1.32,
     filename = 'settings.json',
     logname = 'console.log',
@@ -54,9 +53,12 @@ function HiddenGemsMap:new()
     function HiddenGemsMap.loadData()
         Vars.cet = self.cet
         Vars.language = Game.NameToString(Game.GetSettingsSystem():GetVar("/language", "OnScreen"):GetValue())
-        for record in db:rows('SELECT * FROM localization') do
+        for record in db:rows(string.format('SELECT field, %s FROM settings', string.gsub(Vars.language, '-', '_'))) do
+            local field, localization = table.unpack(record)
+            Vars.localization[field] = localization
+        end
+        for record in db:rows(string.format('SELECT id, %s FROM localization', string.gsub(Vars.language, '-', '_'))) do
             local id, localization = table.unpack(record)
-            localization = json.decode(localization)
             Vars.texts[id] = localization
         end
         for record in db:rows('SELECT * FROM hidden_gems') do
@@ -66,8 +68,8 @@ function HiddenGemsMap:new()
             local row = {}
             row.tag = tag
             row.gemId = gemId
-            row.title = string.format(Vars.texts[titleId][Vars.language], gemId)
-            row.desc = Vars.texts[descId][Vars.language]
+            row.title = string.format(Vars.texts[titleId], gemId)
+            row.desc = Vars.texts[descId]
             row.typemap = typemap
             row.position = Vector4.new(coords.x, coords.y, coords.z, 1.0)
             row.logic = logic
@@ -102,6 +104,7 @@ function HiddenGemsMap:new()
             self.paused = false
             self.changed = false
         end
+        Logging.console('Resuming rotines.', 2)
         if self.paused then
             Cron.Resume(self.ticker)
             for _, timer in pairs(Vars.timers) do
@@ -116,10 +119,12 @@ function HiddenGemsMap:new()
             end, { tick = 1 })
         end
         self.paused = false
+        Logging.console('Resumed rotines.', 2)
     end
 
     ---comment
     function HiddenGemsMap.pause()
+        Logging.console('Pausing rotines.', 2)
         for _, timer in pairs(Vars.timers) do
             Cron.Pause(timer)
         end
@@ -130,6 +135,7 @@ function HiddenGemsMap:new()
             Manager.updatePins()
             self.reloaded = false
         end
+        Logging.console('Paused rotines.', 2)
     end
 
     ---comment
@@ -141,41 +147,39 @@ function HiddenGemsMap:new()
         Observers.setup()
         if not self.settings.disable then
             Logging.console('Mod inicializing.', 2)
-            GameSession.Listen(function(state)
-                if not self.settings.disable then
-                    local event = GameSession.ExportState(state)
-                    if (event:find('event = "Resume"') ~= nil) then
-                        Logging.console('Resuming rotines.', 2)
-                        self.resume()
-                        Logging.console('Resumed rotines.', 2)
-                    elseif (event:find('event = "Pause"') ~= nil)  then
-                        Logging.console('Pausing rotines.', 2)
-                        self.pause()
-                        Logging.console('Paused rotines.', 2)
-                    elseif (event:find('event = "End"') ~= nil) or (event:find('event = "SessionEnd"') ~= nil) then
-                        Logging.console('Ending rotines.', 2)
-                        Manager.clearPins()
-                        self.reloaded = true
-                        Logging.console('Ended rotines.', 2)
-                    end
-                end
-            end)
             GameUI.Listen(function(state)
                 if not self.settings.disable then
-                     local event = GameUI.ExportState(state)
+                    local event = GameUI.ExportState(state)
                     if (event:find('event = "WheelOpen"')) then
                         self.pause()
                     elseif (event:find('event = "PopupOpen"')) then
+                        self.pause()
+                    elseif (event:find('event = "MenuOpen"')) then
                         self.pause()
                     elseif (event:find('event = "WheelClose"')) then
                         self.resume()
                     elseif (event:find('event = "PopupClose"')) then
                         self.resume()
-                    elseif (event:find('event = "MenuClose"')) and (event:find('lastMenu = "Hub"')) then
+                    elseif (event:find('event = "MenuClose"')) then
+                        self.resume()
+                    elseif (event:find('event = "SessionEnd"')) then
+                        Logging.console('Ending rotines.', 2)
+                        Manager.clearPins()
+                        self.paused = false
+                        Logging.console('Ended rotines.', 2)
+                    elseif (event:find('event = "SessionStart"')) then
+                        Logging.console('Starting rotines.', 2)
                         self.reloaded = true
                         self.resume()
-                    elseif (event:find('event = "MenuClose"')) and (event:find('lastMenu = "MainMenu"')) then
-                        self.loadData()
+                        Vars.clear = false
+                        Logging.console('Started rotines.', 2)
+                    elseif (event:find('event = "MenuClose"')) then
+                        if (event:find('lastMenu = "Hub"')) then
+                            self.reloaded = true
+                            self.resume()
+                        elseif (event:find('lastMenu = "MainMenu"')) then
+                            self.loadData()
+                        end
                     elseif (event:find('event = "MenuNav"')) and (event:find('lastSubmenu = "Settings"')) then
                         self.loadData()
                         Settings.setup(self)
