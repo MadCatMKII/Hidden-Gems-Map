@@ -98,6 +98,14 @@ function Manager.validateExpression(expression)
                 return  not Utils.haveVehicle(expression[2])
             end
         end
+    elseif expression[1] == 'Keycard' then
+        if expression[3] == '=' then
+            if expression[4] == 1 then
+                return  Utils.haveKeycard(expression[2])
+            elseif expression[4] == 0 then
+                return  not Utils.haveKeycard(expression[2])
+            end
+        end    
     end
 end
 

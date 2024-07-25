@@ -4,10 +4,11 @@ local Logging = require('modules/Logging')
 local Manager = require('modules/Manager')
 local Observers = require('modules/Observers')
 local Settings = require('modules/Settings')
+local Utils = require('modules/Utils')
 local Vars = require('modules/Vars')
 
 local HiddenGemsMap = {
-    version = '1.2.2',
+    version = '1.3.0',
     cet = 1.32,
     filename = 'settings.json',
     logname = 'console.log',
@@ -77,6 +78,14 @@ function HiddenGemsMap:new()
             row.range = range
             Vars.gems[id] = row
         end
+        for record in db:rows('SELECT id, lockey FROM shards') do
+            local id, lockey = table.unpack(record)
+            table.insert(Vars.lockeys, lockey)
+        end
+        for record in db:rows('SELECT id, tdbid FROM items') do
+            local id, tdbid = table.unpack(record)
+            table.insert(Vars.tdbids, tostring(TweakDBID(tdbid)))
+        end
     end
 
     ---comment
@@ -88,8 +97,25 @@ function HiddenGemsMap:new()
         Vars.inventory = {}
         Vars.stash = {}
         Vars.shards = CodexUtils.GetShardsDataArray(GameInstance.GetJournalManager(), data)
+        Logging.log(string.format('Found %s shards in codex.', #Vars.shards), 2)
+        Vars.shards = Utils.filterShards(Vars.shards)
+        Logging.log(string.format('Filtered %s shards in codex.', #Vars.shards), 2)
         success, Vars.inventory = Game.GetTransactionSystem():GetItemList(Game.GetPlayer())
+        if (success) then
+            Logging.log(string.format('Found %s items in inventory.', #Vars.inventory), 2)
+            Vars.inventory = Utils.filterItems(Vars.inventory)
+            Logging.log(string.format('Filtered %s items in inventory.', #Vars.inventory), 2)
+        else
+            Logging.log('Fail to obtain items in inventory.', 2)
+        end
         success, Vars.stash = Game.GetTransactionSystem():GetItemList(stash)
+        if (success) then
+            Logging.log(string.format('Found %s items in stash.', #Vars.stash), 2)
+            Vars.stash = Utils.filterItems(Vars.stash)
+            Logging.log(string.format('Filtered %s items in stash.', #Vars.stash), 2)
+        else
+            Logging.log('Fail to obtain items in stash.', 2)
+        end
     end
 
     ---comment

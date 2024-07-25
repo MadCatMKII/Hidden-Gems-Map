@@ -133,6 +133,56 @@ function Utils.haveItem(baseId)
 end
 
 ---comment
+---@param baseId string
+---@return boolean
+function Utils.haveKeycard(baseId)
+	local tdbid = tostring(TweakDBID(string.format('Keycards.%s', baseId)))
+	for _, item in pairs(Vars.inventory) do
+		if tostring(item:GetID().id) == tdbid then
+			return true
+		end
+	end
+	for _, item in pairs(Vars.stash) do
+		if tostring(item:GetID().id) == tdbid then
+			return true
+		end
+	end
+	return false
+end
+
+---comment
+---@param list table
+---@return table
+function Utils.filterItems(list)
+	local items = {}
+	for _, tdbid in pairs(Vars.tdbids) do
+		for i, item in pairs(list) do
+			if (tostring(item:GetID().id) == tdbid) then
+				table.insert(items, list[i])
+				break
+			end
+		end
+	end
+	return items
+end
+
+---comment
+---@param list table
+---@return table
+function Utils.filterShards(list)
+	local shards = {}
+	for _, lockey in pairs(Vars.lockeys) do
+		for i, shard in pairs(list) do
+			if shard.data.title == lockey then
+				table.insert(shards, list[i])
+				break
+			end
+		end
+	end
+	return shards
+end
+
+---comment
 ---@param path string
 ---@return any
 function Utils.readJson(path)

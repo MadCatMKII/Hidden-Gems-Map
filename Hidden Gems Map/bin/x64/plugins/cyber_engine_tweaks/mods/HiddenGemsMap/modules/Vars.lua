@@ -3,15 +3,17 @@ local Vars = {
     color = { red = 65, green = 144, blue = 115 },
     disable = false,
     gems = {},
-    texts = {},
     inventory = {},
     language = '',
     localization = {},
+    lockeys = {},
     logname = '',
     pins = {},
     settings = {},
     shards = {},
     stash = {},
+    tdbids = {},
+    texts = {},
     timers = {}
 }
 
