@@ -7,7 +7,7 @@ local Settings = require('modules/Settings')
 local Vars = require('modules/Vars')
 
 local HiddenGemsMap = {
-    version = '1.2.1',
+    version = '1.2.2',
     cet = 1.32,
     filename = 'settings.json',
     logname = 'console.log',
