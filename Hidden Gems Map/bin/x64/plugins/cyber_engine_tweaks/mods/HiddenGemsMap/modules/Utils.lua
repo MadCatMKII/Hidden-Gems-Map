@@ -115,28 +115,10 @@ function Utils.haveVehicle(vehicle)
 end
 
 ---comment
----@param baseId string
+---@param record string
 ---@return boolean
-function Utils.haveItem(baseId)
-	local tdbid = tostring(TweakDBID(string.format('Items.%s', baseId)))
-	for _, item in pairs(Vars.inventory) do
-		if tostring(item:GetID().id) == tdbid then
-			return true
-		end
-	end
-	for _, item in pairs(Vars.stash) do
-		if tostring(item:GetID().id) == tdbid then
-			return true
-		end
-	end
-	return false
-end
-
----comment
----@param baseId string
----@return boolean
-function Utils.haveKeycard(baseId)
-	local tdbid = tostring(TweakDBID(string.format('Keycards.%s', baseId)))
+function Utils.haveItem(record)
+	local tdbid = tostring(TweakDBID(record))
 	for _, item in pairs(Vars.inventory) do
 		if tostring(item:GetID().id) == tdbid then
 			return true
@@ -155,13 +137,12 @@ end
 ---@return table
 function Utils.filterItems(list)
 	local items = {}
-	for _, tdbid in pairs(Vars.tdbids) do
-		for i, item in pairs(list) do
-			if (tostring(item:GetID().id) == tdbid) then
-				table.insert(items, list[i])
-				break
-			end
-		end
+	local set = {}
+	for _, item in ipairs(list) do
+		set[tostring(item:GetID().id)] = item
+	end
+	for _, tdbid in ipairs(Vars.tdbids) do
+		table.insert(items, set[tdbid])
 	end
 	return items
 end
@@ -171,13 +152,12 @@ end
 ---@return table
 function Utils.filterShards(list)
 	local shards = {}
-	for _, lockey in pairs(Vars.lockeys) do
-		for i, shard in pairs(list) do
-			if shard.data.title == lockey then
-				table.insert(shards, list[i])
-				break
-			end
-		end
+	local set = {}
+	for _, shard in ipairs(list) do
+		set[shard.data.title] = shard
+	end
+	for _, lockey in ipairs(Vars.lockeys) do
+		table.insert(shards, set[lockey])
 	end
 	return shards
 end
