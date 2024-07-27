@@ -115,6 +115,27 @@ function Utils.haveVehicle(vehicle)
 end
 
 ---comment
+---@param name string
+---@return boolean
+function Utils.haveRecipe(name)
+	local tdbid
+	local known = false
+	local crafting = Game.GetScriptableSystemsContainer():Get('CraftingSystem')
+	local craftbook = crafting:GetPlayerCraftBook()
+	tdbid = TweakDBID(string.format('Items.Common_%s', name))
+	known = known or craftbook:KnowsRecipe(tdbid)
+	tdbid = TweakDBID(string.format('Items.Uncommon_%s', name))
+	known = known or craftbook:KnowsRecipe(tdbid)
+	tdbid = TweakDBID(string.format('Items.Rare_%s', name))
+	known = known or craftbook:KnowsRecipe(tdbid)
+	tdbid = TweakDBID(string.format('Items.Epic_%s', name))
+	known = known or craftbook:KnowsRecipe(tdbid)
+	tdbid = TweakDBID(string.format('Items.Legendary_%s', name))
+	known = known or craftbook:KnowsRecipe(tdbid)
+	return known
+end
+
+---comment
 ---@param record string
 ---@return boolean
 function Utils.haveItem(record)

@@ -85,11 +85,19 @@ function Manager.validateExpression(expression)
     elseif expression[1] == 'Setting' then
         if expression[3] == '=' then
             if expression[4] == 1 then
-                return  Vars.settings.concealable[expression[2]] == true
+                return Vars.settings.concealable[expression[2]]
             elseif expression[4] == 0 then
-                return  Vars.settings.concealable[expression[2]] == false
+                return not Vars.settings.concealable[expression[2]]
             end
         end
+    elseif expression[1] == 'Recipe' then
+        if expression[3] == '=' then
+            if expression[4] == 1 then
+                return  Utils.haveRecipe(expression[2])
+            elseif expression[4] == 0 then
+                return  not Utils.haveRecipe(expression[2])
+            end
+        end    
     elseif expression[1] == 'Vehicle' then
         if expression[3] == '=' then
             if expression[4] == 1 then
