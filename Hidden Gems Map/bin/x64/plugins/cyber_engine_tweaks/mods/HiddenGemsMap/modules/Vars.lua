@@ -1,6 +1,7 @@
 local Vars = {
     clear = false,
     color = { red = 65, green = 144, blue = 115 },
+    concealable = {},
     disable = false,
     gems = {},
     inventory = {},

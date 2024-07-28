@@ -13,49 +13,10 @@ function Settings.setup(main)
     local tab = '/main'
     local subSettings = '/main/Settings'
     local subConcealable = '/main/Concealable'
-    local tags = {
-        'dev_easter_egg',-- 1 - Dev Sightseeing Point
-        'dev_room_01', -- 2 - Dev Room Kabuki
-        'card_player_robots', -- 3 - Card Player Robots
-        'button_easter_egg', -- 4 - Chapter Hill Red Button
-        'ep1_growl', -- 5 - Growl FM Party
-        'mws_se5_03_game_started', -- 6 - Arasaka Tower 3D
-        'blade_runner_easter_egg', -- 7 - Blade Runner Easter Egg
-        'wst_cat_dtn_01_scene', -- 8 - Downtown's Cat
-        'dev_room_02', -- 9 - Arasaka Memorial
-        'mdt_ep1_barghest_base', -- 10 - Barghest Base Data Terminal
-        'mdt_ep1_barricade', -- 11 - Barricade Data Terminal
-        'mdt_ep1_brainporium', -- 12 - Brainporium Data Terminal
-        'mdt_ep1_kress_street', -- 13 - Kress Street Data Terminal
-        'mdt_ep1_luxor_high_wellness_spa', -- 14 - Luxor High Wellness Spa Data Terminal
-        'mdt_ep1_overpass', -- 15 - Overpass Data Terminal
-        'mdt_ep1_parking_garage',  -- 16 - Parking Garage Data Terminal
-        'mdt_ep1_stadium', -- 17 - Stadium Data Terminal
-        'mdt_ep1_terra_cognita', -- 18 - Terra Cognita Data Terminal
-        'wst_cat_ep1_01_scene' -- 19 - Dogtown's Cat
-    }
 
     ---comment
     function Settings.refresh()
 	    NativeSettings.refresh()
-    end
-
-    ---comment
-    ---@param tag string
-    ---@return string
-    function Settings.getTitle(tag)
-	    for _, gem in pairs(Vars.gems) do
-            if gem.tag == tag then
-			    return gem.title
-		    end
-        end
-    end
-
-    ---comment
-    ---@param tag string
-    ---@return string
-    function Settings.getDesc(tag)
-        return string.format(loc.ShowDesc, Settings.getTitle(tag))
     end
 
     local cet = tonumber((GetVersion():gsub('^v(%d+)%.(%d+)%.(%d+)(.*)', function(major, minor, patch, wip)
@@ -72,7 +33,7 @@ function Settings.setup(main)
     end
 
     local settings = Utils.readJson(main.filename)
-    if settings ~= nil and settings.concealable ~= nil and #settings.concealable == #tags then
+    if settings ~= nil and settings.concealable ~= nil and #settings.concealable == #Vars.concealable then
         for key, _ in pairs(settings) do
             if settings[key] ~= nil then
                 main.settings[key] = settings[key]
@@ -137,14 +98,25 @@ function Settings.setup(main)
         end
         NativeSettings.addSubcategory(subConcealable, loc.Concealable)
 
-        for i = 1, #tags, 1 do
-            NativeSettings.addSwitch(subConcealable, Settings.getTitle(tags[i]), Settings.getDesc(tags[i]),
-                concealable[i], true, function(state)
+        for i = 1, #Vars.concealable, 1 do
+            local title = 'Unknown Hidden Gem'
+            local desc = 'Unknown Hidden Gem'
+            for _, gem in pairs(Vars.gems) do
+                print(gem.tag .. ' == ' .. Vars.concealable[i].tag)
+                if gem.tag == Vars.concealable[i].tag then
+                    title = string.format('%s\n%s', gem.title, Vars.concealable[i].loc)
+                    desc = gem.title
+                    break
+                end
+            end
+            desc = string.format(loc.ShowDesc, desc)
+            NativeSettings.addSwitch(subConcealable, title, desc, concealable[i], true,
+                function(state)
                     concealable[i] = state
                     main.settings.concealable = concealable
                     Manager.updatePins()
                     Settings.save(main)
-            end)
+                end)
         end
     end
 end

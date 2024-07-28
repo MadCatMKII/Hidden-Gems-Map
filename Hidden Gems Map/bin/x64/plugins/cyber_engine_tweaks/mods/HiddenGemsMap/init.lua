@@ -8,7 +8,7 @@ local Utils = require('modules/Utils')
 local Vars = require('modules/Vars')
 
 local HiddenGemsMap = {
-    version = '1.3.2',
+    version = '1.3.3',
     cet = 1.32,
     filename = 'settings.json',
     logname = 'console.log',
@@ -23,28 +23,9 @@ local HiddenGemsMap = {
         debug = 1,
         -- Sets the map update frequency cycle in seconds
         frequency = 15.0,
-        -- Sets the hide or unhide of specific pins
-        concealable = {
-            true, -- 1 - Dev Sightseeing Point
-            true, -- 2 - Dev Room Kabuki
-            true, -- 3 - Card Player Robots
-            true, -- 4 - Chapter Hill Red Button
-            true, -- 5 - Growl FM Party
-            true, -- 6 - Arasaka Tower 3D
-            true, -- 7 - Blade Runner Easter Egg
-            true, -- 8 - Downtown's Cat
-            true, -- 9 - Arasaka Memorial
-            true, -- 10 - Barghest Base Data Terminal
-            true, -- 11 - Barricade Data Terminal
-            true, -- 12 - Brainporium Data Terminal
-            true, -- 13 - Kress Street Data Terminal
-            true, -- 14 - Luxor High Wellness Spa Data Terminal
-            true, -- 15 - Overpass Data Terminal
-            true, -- 16 - Parking Garage Data Terminal
-            true, -- 17 - Stadium Data Terminal
-            true, -- 18 - Terra Cognita Data Terminal
-            true  -- 19 - Dogtown's Cat
-        }
+        -- Sets the show or hide of specific pins
+        concealable = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+            true, true, true }
     }
 }
 
@@ -54,11 +35,18 @@ function HiddenGemsMap:new()
     function HiddenGemsMap.loadData()
         Vars.cet = self.cet
         Vars.language = Game.NameToString(Game.GetSettingsSystem():GetVar("/language", "OnScreen"):GetValue())
-        for record in db:rows(string.format('SELECT field, %s FROM settings', string.gsub(Vars.language, '-', '_'))) do
+        local column = string.gsub(Vars.language, '-', '_')
+        for record in db:rows(string.format('SELECT field, %s FROM settings', column)) do
             local field, localization = table.unpack(record)
             Vars.localization[field] = localization
         end
-        for record in db:rows(string.format('SELECT id, %s FROM localization', string.gsub(Vars.language, '-', '_'))) do
+        for record in db:rows(string.format('SELECT id, tag, %s FROM concealable', column)) do
+            local id, tag, localization = table.unpack(record)
+            Vars.concealable[id] = {}
+            Vars.concealable[id].tag = tag
+            Vars.concealable[id].loc = localization
+        end
+        for record in db:rows(string.format('SELECT id, %s FROM localization', column)) do
             local id, localization = table.unpack(record)
             Vars.texts[id] = localization
         end
@@ -78,12 +66,12 @@ function HiddenGemsMap:new()
             row.range = range
             Vars.gems[id] = row
         end
-        for record in db:rows('SELECT id, lockey FROM shards') do
-            local id, lockey = table.unpack(record)
+        for record in db:rows('SELECT lockey FROM shards') do
+            local lockey = table.unpack(record)
             table.insert(Vars.lockeys, lockey)
         end
-        for record in db:rows('SELECT id, tdbid FROM items') do
-            local id, tdbid = table.unpack(record)
+        for record in db:rows('SELECT tdbid FROM items') do
+            local tdbid = table.unpack(record)
             table.insert(Vars.tdbids, tostring(TweakDBID(tdbid)))
         end
     end
