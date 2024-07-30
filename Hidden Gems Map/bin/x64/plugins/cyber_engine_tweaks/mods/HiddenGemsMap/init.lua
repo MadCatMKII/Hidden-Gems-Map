@@ -8,7 +8,7 @@ local Utils = require('modules/Utils')
 local Vars = require('modules/Vars')
 
 local HiddenGemsMap = {
-    version = '1.3.7',
+    version = '1.3.8',
     cet = 1.32,
     filename = 'settings.json',
     logname = 'console.log',
@@ -25,7 +25,7 @@ local HiddenGemsMap = {
         frequency = 15.0,
         -- Sets the show or hide of specific pins
         concealable = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-            true, true, true }
+            true, true, true, true }
     }
 }
 

@@ -102,7 +102,7 @@ function Settings.setup(main)
             local title = 'Unknown Hidden Gem'
             local desc = 'Unknown Hidden Gem'
             for _, gem in pairs(Vars.gems) do
-                if gem.tag == Vars.concealable[i].tag then
+                if string.find(gem.tag, Vars.concealable[i].tag) then
                     title = string.format('%s\n%s', gem.title, Vars.concealable[i].loc)
                     desc = gem.title
                     break
