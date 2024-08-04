@@ -115,7 +115,8 @@ function Settings.setup(main)
                     main.settings.concealable = concealable
                     Manager.updatePins()
                     Settings.save(main)
-                end)
+                end
+            )
         end
     end
 end
