@@ -98,6 +98,17 @@ function Settings.setup(main)
         end
         NativeSettings.addSubcategory(subConcealable, loc.Concealable)
 
+        loc.FilterLabel = string.format(loc.FilterLabel, 'Missing Persons', 'Pacifica Typhoon')
+        loc.FilterDesc = string.format(loc.FilterDesc, loc.FilterLabel)
+        NativeSettings.addSwitch(subConcealable, loc.FilterLabel, loc.FilterDesc, concealable[1], true,
+            function(state)
+                concealable[1] = state
+                main.settings.concealable = concealable
+                Manager.updatePins()
+                Settings.save(main)
+            end
+        )
+
         for i = 1, #Vars.concealable, 1 do
             local title = 'Unknown Hidden Gem'
             local desc = 'Unknown Hidden Gem'
@@ -109,9 +120,9 @@ function Settings.setup(main)
                 end
             end
             desc = string.format(loc.ShowDesc, desc)
-            NativeSettings.addSwitch(subConcealable, title, desc, concealable[i], true,
+            NativeSettings.addSwitch(subConcealable, title, desc, concealable[i + 1], true,
                 function(state)
-                    concealable[i] = state
+                    concealable[i + 1] = state
                     main.settings.concealable = concealable
                     Manager.updatePins()
                     Settings.save(main)

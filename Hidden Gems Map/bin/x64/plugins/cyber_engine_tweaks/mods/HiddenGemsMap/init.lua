@@ -8,7 +8,7 @@ local Utils = require('modules/Utils')
 local Vars = require('modules/Vars')
 
 local HiddenGemsMap = {
-    version = '1.3.12',
+    version = '1.4.0',
     cet = 1.32,
     filename = 'settings.json',
     logname = 'console.log',
@@ -27,7 +27,7 @@ local HiddenGemsMap = {
         concealable = {
             true, true, true, true, true, true, true, true, true, true,
             true, true, true, true, true, true, true, true, true, true,
-            true, true, true
+            true, true, true, true
         }
     }
 }

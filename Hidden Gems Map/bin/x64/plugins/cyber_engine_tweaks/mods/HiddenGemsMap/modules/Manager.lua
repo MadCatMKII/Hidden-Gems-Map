@@ -58,7 +58,15 @@ end
 ---@param expression any
 ---@return boolean
 function Manager.validateExpression(expression)
-    if expression[1] == 'Shard' then
+    if expression[1] == 'Setting' then
+        if expression[3] == '=' then
+            if expression[4] == 1 then
+                return Vars.settings.concealable[expression[2]]
+            elseif expression[4] == 0 then
+                return not Vars.settings.concealable[expression[2]]
+            end
+        end
+    elseif expression[1] == 'Shard' then
         if expression[3] == '=' then
             if expression[4] == 1 then
                 return Utils.haveShard(expression[2])
@@ -82,14 +90,6 @@ function Manager.validateExpression(expression)
                 return  not Utils.haveItem(expression[2])
             end
         end
-    elseif expression[1] == 'Setting' then
-        if expression[3] == '=' then
-            if expression[4] == 1 then
-                return Vars.settings.concealable[expression[2]]
-            elseif expression[4] == 0 then
-                return not Vars.settings.concealable[expression[2]]
-            end
-        end
     elseif expression[1] == 'Recipe' then
         if expression[3] == '=' then
             if expression[4] == 1 then
@@ -97,7 +97,7 @@ function Manager.validateExpression(expression)
             elseif expression[4] == 0 then
                 return  not Utils.haveRecipe(expression[2])
             end
-        end    
+        end
     elseif expression[1] == 'Vehicle' then
         if expression[3] == '=' then
             if expression[4] == 1 then
