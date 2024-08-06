@@ -111,10 +111,10 @@ end
 
 ---comment
 ---@param gem any
----@param create boolean
----@param remove boolean
----@param setting boolean
-function Manager.updatePin(gem, create, remove, setting)
+function Manager.updatePin(gem, notify)
+    local create = true
+    local remove = true
+    local setting = false
     Logging.log(string.format('Check started -> %s -> %s', gem.title, gem.tag), 4)
     for _, exp in pairs(gem.logic.requirements) do
         create = create and Manager.validateExpression(exp)
@@ -131,7 +131,7 @@ function Manager.updatePin(gem, create, remove, setting)
     if remove and #gem.logic.goals > 0 then
         if Manager.existPinbyTag(gem.tag) then
             Manager.removePinByTag(gem.tag)
-            if not setting and not Vars.clear then
+            if not setting and notify then
                 Utils.notify(gem.title)
             end
         end
@@ -145,10 +145,7 @@ end
 ---comment
 function Manager.updatePins()
     for _, gem in pairs(Vars.gems) do
-        local create = true
-        local remove = true
-        local setting = false
-        Manager.updatePin(gem, create, remove, setting)
+        Manager.updatePin(gem, false)
     end
 end
 
@@ -156,18 +153,17 @@ end
 function Manager.schedulePins()
     local unit = (Vars.settings.frequency - 0.05) / #Vars.gems
     local delay = 0
+    local timers = {}
     for _, gem in pairs(Vars.gems) do
-        local create = true
-        local remove = true
-        local setting = false
         local id = Cron.After(delay, function ()
             if not Vars.clear then
-                Manager.updatePin(gem, create, remove, setting)
+                Manager.updatePin(gem, true)
             end
         end, { tick = 1 })
+        timers[id] = id
         delay = delay + unit
-        Vars.timers[id] = id
     end
+    Vars.timers = timers
 end
 
 ---comment

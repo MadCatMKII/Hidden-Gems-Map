@@ -8,14 +8,17 @@ local Utils = require('modules/Utils')
 local Vars = require('modules/Vars')
 
 local HiddenGemsMap = {
-    version = '1.4.0',
+    version = '1.4.1',
     cet = 1.32,
     filename = 'settings.json',
     logname = 'console.log',
     ticker = nil,
-    paused = false,
-    changed = false,
+    -- Indicates a pins reload is needed
     reloaded = true,
+    -- Indicates the update frequency was changed
+    changed = false,
+    -- Indicates the game was paused
+    paused = false,
     settings = {
         -- Sets the mod disabled
         disable = false,
@@ -114,6 +117,7 @@ function HiddenGemsMap:new()
         if self.reloaded then
             self.update()
             Manager.updatePins()
+            self.paused = false
             self.reloaded = false
         end
         if self.changed then
@@ -129,7 +133,6 @@ function HiddenGemsMap:new()
             end
         else
             self.ticker = Cron.Every(self.settings.frequency, function(timer)
-                Vars.timers = {}
                 Logging.log(string.format('Tick #%d from a %.2f seconds cycle.', timer.tick, timer.interval), 3)
                 Manager.schedulePins()
                 timer.tick = timer.tick + 1
@@ -146,12 +149,8 @@ function HiddenGemsMap:new()
             Cron.Pause(timer)
         end
         Cron.Pause(self.ticker)
-        self.paused = true
         self.update()
-        if self.reloaded then
-            Manager.updatePins()
-            self.reloaded = false
-        end
+        self.paused = true
         Logging.console('Paused rotines.', 2)
     end
 
@@ -182,13 +181,12 @@ function HiddenGemsMap:new()
                     elseif (event:find('event = "SessionEnd"')) then
                         Logging.console('Ending rotines.', 2)
                         Manager.clearPins()
-                        self.paused = false
                         Logging.console('Ended rotines.', 2)
                     elseif (event:find('event = "SessionStart"')) then
                         Logging.console('Starting rotines.', 2)
+                        Vars.clear = false
                         self.reloaded = true
                         self.resume()
-                        Vars.clear = false
                         Logging.console('Started rotines.', 2)
                     elseif (event:find('event = "MenuClose"')) then
                         if (event:find('lastMenu = "Hub"')) then
