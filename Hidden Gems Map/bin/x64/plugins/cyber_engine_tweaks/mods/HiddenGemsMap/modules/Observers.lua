@@ -5,11 +5,11 @@ local Vars = require('modules/Vars')
 
 local Observers = {}
 
----comment
+--- Sets up required observers
 function Observers.setup()
     Logging.console('Observers setup.', 2)
 
-    ---comment
+    --- Sets up a observer for map pins update root state
     ---@param this any
     ObserveAfter('BaseMappinBaseController', 'UpdateRootState', function(this)
         if not Vars.settings.disable then
@@ -17,7 +17,7 @@ function Observers.setup()
         end
     end)
 
-    ---comment
+    --- Sets up a observer for map pins tooltips filling
     ---@param self any
     ---@param data any
     ---@param menu any

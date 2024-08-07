@@ -2,59 +2,42 @@ local Vars = require('modules/Vars')
 
 local Utils = {}
 
----comment
+--- Convertes RGB color data in HDR color data
 ---@param color any
 ---@return any
 function Utils.getColorStyle(color)
 	return Color.ToHDRColorDirect(Color.new({ Red = color.red, Green = color.green, Blue = color.blue, Alpha = 1 }))
 end
 
----comment
+--- Calculates distance between two positions
 ---@param origin any
 ---@param destination any
 ---@return number
 function Utils.calculateDistance(origin, destination)
-	local powX2 = ((origin.x - destination.x)^2)
-	local powY2 = ((origin.y - destination.y)^2)
-	local powZ2 = ((origin.z - destination.z)^2)
-	return math.sqrt(powX2 + powY2 + powZ2)
+	v1 = Vector4.new(origin.x, origin.y, origin.z, 1.0)
+	v2 = Vector4.new(destination.x, destination.y, destination.z, 1.0)
+	return Vector4.DistanceSquared(v1, v2)
 end
 
----comment
+--- Checks if two positions are equal
 ---@param p1 any
 ---@param p2 any
 ---@return boolean
 function Utils.isSamePosition(p1, p2)
-	local result = false
-	if math.floor(p1.x) == math.floor(p2.x) then
-        if math.floor(p1.y) == math.floor(p2.y) then
-            result = math.floor(p1.z) == math.floor(p2.z)
-		end
-	end
-    return result
+	return Utils.calculateDistance(p1, p2) == 0
 end
 
----comment
+--- Checks if two positions are near based on a radius distance
 ---@param p1 any
 ---@param p2 any
 ---@param radius number
 ---@param zradius number
 ---@return boolean
-function Utils.isNearPosition(p1, p2, radius, zradius)
-	local result = false
-	if (p1.x >= p2.x - radius) and (p1.x <= p2.x + radius) then
-        if (p1.y >= p2.y - radius) and (p1.y <= p2.y + radius) then
-			if zradius ~= nil and zradius ~= 0 then
-                result = (p1.z >= p2.z - zradius) and (p1.z <= p2.z + zradius)
-            else
-                result = (p1.z >= p2.z - radius) and (p1.z <= p2.z + radius)
-			end
-		end
-	end
-    return result
+function Utils.isNearPosition(p1, p2, radius)
+	return Utils.calculateDistance(p1, p2) < radius
 end
 
----comment
+--- Sends a neutral notification to the player
 ---@param title integer
 function Utils.notify(title)
 	local blackboardDefs = Game.GetAllBlackboardDefs()
@@ -68,7 +51,7 @@ function Utils.notify(title)
 	blackboardUI:SetVariant(blackboardDefs.UI_Notifications.WarningMessage, ToVariant(message), true)
 end
 
----comment
+--- Checks if a shard exists in player's codex
 ---@param lockey string
 ---@return boolean
 function Utils.haveShard(lockey)
@@ -80,7 +63,7 @@ function Utils.haveShard(lockey)
 	return false
 end
 
----comment
+--- Checks if a fact is equal to a threshold in player's background
 ---@param expected integer
 ---@param fact string
 ---@return boolean
@@ -89,7 +72,7 @@ function Utils.sameAsFact(expected, fact)
     return actual == expected
 end
 
----comment
+--- Checks if a fact is above a threshold in player's background
 ---@param expected integer
 ---@param fact string
 ---@return boolean
@@ -98,7 +81,7 @@ function Utils.greaterThanFact(expected, fact)
     return actual > expected
 end
 
----comment
+--- Checks if a fact is below a threshold in player's background
 ---@param expected integer
 ---@param fact string
 ---@return boolean
@@ -107,14 +90,14 @@ function Utils.lesserThanFact(expected, fact)
     return actual < expected
 end
 
----comment
+--- Checks if a vehicle exists in player's garage
 ---@param vehicle string
 ---@return boolean
 function Utils.haveVehicle(vehicle)
 	return Game.GetVehicleSystem():IsVehiclePlayerUnlocked(string.format('Vehicle.%s', vehicle))
 end
 
----comment
+--- Checks if a recipe exists in player's craft book
 ---@param name string
 ---@return boolean
 function Utils.haveRecipe(name)
@@ -135,7 +118,7 @@ function Utils.haveRecipe(name)
 	return known
 end
 
----comment
+--- Checks if an item exists in player's inventory or stash
 ---@param record string
 ---@return boolean
 function Utils.haveItem(record)
@@ -153,37 +136,39 @@ function Utils.haveItem(record)
 	return false
 end
 
----comment
+--- Filter items from a list of items
+---@param filter table
 ---@param list table
 ---@return table
-function Utils.filterItems(list)
+function Utils.filterItems(filter, list)
 	local items = {}
 	local set = {}
 	for _, item in ipairs(list) do
 		set[tostring(item:GetID().id)] = item
 	end
-	for _, tdbid in ipairs(Vars.tdbids) do
+	for _, tdbid in ipairs(filter) do
 		table.insert(items, set[tdbid])
 	end
 	return items
 end
 
----comment
+--- Filter shards from a list of shards
+---@param filter table
 ---@param list table
 ---@return table
-function Utils.filterShards(list)
+function Utils.filterShards(filter, list)
 	local shards = {}
 	local set = {}
 	for _, shard in ipairs(list) do
 		set[shard.data.title] = shard
 	end
-	for _, lockey in ipairs(Vars.lockeys) do
+	for _, lockey in ipairs(filter) do
 		table.insert(shards, set[lockey])
 	end
 	return shards
 end
 
----comment
+--- Reads json data from a file
 ---@param path string
 ---@return any
 function Utils.readJson(path)
@@ -199,7 +184,7 @@ function Utils.readJson(path)
     return nil
 end
 
----comment
+--- Writes json data overwriting a file
 ---@param path string
 ---@param data string
 ---@return boolean

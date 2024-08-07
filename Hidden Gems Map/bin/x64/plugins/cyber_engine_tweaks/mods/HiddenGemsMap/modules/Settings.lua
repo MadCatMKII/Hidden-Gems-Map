@@ -5,7 +5,7 @@ local Vars = require('modules/Vars')
 
 local Settings = {}
 
----comment
+--- Sets up settings screen tab
 ---@param main any
 function Settings.setup(main)
     local NativeSettings = GetMod('nativeSettings')
@@ -14,11 +14,12 @@ function Settings.setup(main)
     local subSettings = '/main/Settings'
     local subConcealable = '/main/Concealable'
 
-    ---comment
+    --- Refreshs the settings screen tab
     function Settings.refresh()
 	    NativeSettings.refresh()
     end
 
+    -- Checks for Cyber Engine Tweaks required version
     local cet = tonumber((GetVersion():gsub('^v(%d+)%.(%d+)%.(%d+)(.*)', function(major, minor, patch, wip)
         return ('%d.%02d%02d%d'):format(major, minor, patch, (wip == '' and 0 or 1))
     end)))
@@ -27,13 +28,15 @@ function Settings.setup(main)
         return
     end
 
+    -- Checks for Native Settings UI presence
     if not NativeSettings then
         Logging.console('Native Settings UI missing. Resuming with settings from file.', 1)
         return
     end
 
+    -- Loads or creates the settings file
     local settings = Utils.readJson(main.filename)
-    if settings ~= nil and settings.concealable ~= nil and #settings.concealable == #Vars.concealable then
+    if settings ~= nil and settings.concealable ~= nil and #settings.concealable == (#Vars.concealable + 1) then
         for key, _ in pairs(settings) do
             if settings[key] ~= nil then
                 main.settings[key] = settings[key]
@@ -44,19 +47,23 @@ function Settings.setup(main)
         Settings.save(main)
 	end
 
+    -- Loads all settings to local variables
     local disable = main.settings.disable
     local debug = main.settings.debug
     local frequency = main.settings.frequency
     local concealable = main.settings.concealable
 
     if loc ~= nil then
+        -- Sets up the settings tab
         NativeSettings.addTab(tab, loc.Tab)
 
+        -- Sets up the settings subcategory
         if NativeSettings.pathExists(subSettings) then
             NativeSettings.removeSubcategory(subSettings)
         end
         NativeSettings.addSubcategory(subSettings, loc.Subcategory)
 
+        -- Sets up the disable switch
         NativeSettings.addSwitch(subSettings, loc.DisableLabel, loc.DisableDesc, disable, false,
             function(state)
                 disable = state
@@ -75,6 +82,7 @@ function Settings.setup(main)
             end
         )
 
+        -- Sets up the logging level selector
         local list = {[1] = loc.Default, [2] = loc.Load, [3] = loc.Pins, [4] = loc.Decisions}
         NativeSettings.addSelectorString(subSettings, loc.LogLabel, loc.LogDesc, list, debug, 1,
             function(value)
@@ -84,6 +92,7 @@ function Settings.setup(main)
             end
         )
 
+        -- Sets up the update frequency configurer
         NativeSettings.addRangeInt(subSettings, loc.FreqLabel, loc.FreqDesc, 15, 60, 1, frequency, 5,
             function(value)
                 frequency = value
@@ -93,11 +102,13 @@ function Settings.setup(main)
             end
         )
 
+        -- Sets up the concealable subcategory
         if NativeSettings.pathExists(subConcealable) then
             NativeSettings.removeSubcategory(subConcealable)
         end
         NativeSettings.addSubcategory(subConcealable, loc.Concealable)
 
+        -- Sets up the Missing Persons and Pacifica Typhoon switch
         loc.FilterLabel = string.format(loc.FilterLabel, 'Missing Persons', 'Pacifica Typhoon')
         loc.FilterDesc = string.format(loc.FilterDesc, loc.FilterLabel)
         NativeSettings.addSwitch(subConcealable, loc.FilterLabel, loc.FilterDesc, concealable[1], true,
@@ -109,6 +120,7 @@ function Settings.setup(main)
             end
         )
 
+        -- Sets up the remaining concealable switchs
         for i = 1, #Vars.concealable, 1 do
             local title = 'Unknown Hidden Gem'
             local desc = 'Unknown Hidden Gem'
@@ -129,10 +141,13 @@ function Settings.setup(main)
                 end
             )
         end
+    else
+        Logging.console('Error on the settings localization loading.', 1)
+        return
     end
 end
 
----comment
+--- Saves settings on a file
 ---@param main any
 function Settings.save(main)
     Vars.settings = main.settings

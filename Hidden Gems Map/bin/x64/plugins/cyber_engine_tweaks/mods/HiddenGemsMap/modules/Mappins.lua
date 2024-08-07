@@ -3,7 +3,7 @@ local Vars = require('modules/Vars')
 
 local Mappins = {}
 
----comment
+--- Updates the map pins root state
 ---@param this any
 function Mappins.BaseMappinBaseController_UpdateRootState(this)
 	local player = Game.GetPlayer():GetWorldPosition()
@@ -13,7 +13,7 @@ function Mappins.BaseMappinBaseController_UpdateRootState(this)
 		local pin = v
 		if (pin.position ~= nil and Utils.isSamePosition(pin.position, position)) then
 			if (pin.range ~= 0 and pin.range ~= nil) then
-				if Utils.isNearPosition(player, pin.position, pin.range, 0) then
+				if Utils.isNearPosition(player, pin.position, pin.range) then
 					this:SetRootVisible(true)
 					else
 					this:SetRootVisible(false)
@@ -36,7 +36,7 @@ function Mappins.BaseMappinBaseController_UpdateRootState(this)
 			end
 			if pin.style ~= nil then
 				if pin.style.icon ~= nil then
-					local record = TweakDBInterface.GetUIIconRecord("ChoiceIcons." .. pin.style.icon)
+					local record = TweakDBInterface.GetUIIconRecord('ChoiceIcons.' .. pin.style.icon)
 					if(record ~= nil) then
 						v.widget:SetTexturePart(record:AtlasPartName())
 						v.widget:SetAtlasResource(record:AtlasResourcePath())
@@ -51,7 +51,7 @@ function Mappins.BaseMappinBaseController_UpdateRootState(this)
 	end
 end
 
----comment
+--- Customizes the tooltip of the map pins
 ---@param self any
 ---@param data any
 ---@param menu any

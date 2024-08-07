@@ -8,10 +8,14 @@ local Utils = require('modules/Utils')
 local Vars = require('modules/Vars')
 
 local HiddenGemsMap = {
-    version = '1.4.1',
+    version = '1.4.2',
+    -- Cyber Engine Tweaks minimum required version
     cet = 1.32,
+    -- Settings filename
     filename = 'settings.json',
+    -- Log filename
     logname = 'console.log',
+    -- Map refresh main timer
     ticker = nil,
     -- Indicates a pins reload is needed
     reloaded = true,
@@ -19,6 +23,7 @@ local HiddenGemsMap = {
     changed = false,
     -- Indicates the game was paused
     paused = false,
+    -- Settings table loaded from the settings file
     settings = {
         -- Sets the mod disabled
         disable = false,
@@ -35,12 +40,16 @@ local HiddenGemsMap = {
     }
 }
 
+--- Main method
+---@return table
 function HiddenGemsMap:new()
 
-    ---comment
+    --- Load all data from the database
     function HiddenGemsMap.loadData()
         Vars.cet = self.cet
         Vars.language = Game.NameToString(Game.GetSettingsSystem():GetVar("/language", "OnScreen"):GetValue())
+
+        -- Load localization data from the database
         local column = string.gsub(Vars.language, '-', '_')
         for record in db:rows(string.format('SELECT field, %s FROM settings', column)) do
             local field, localization = table.unpack(record)
@@ -56,6 +65,8 @@ function HiddenGemsMap:new()
             local id, localization = table.unpack(record)
             Vars.texts[id] = localization
         end
+
+        -- Load hidden gems data from the database
         for record in db:rows('SELECT * FROM hidden_gems') do
             local id, tag, gemId, titleId, descId, typemap, coords, logic, icon, range = table.unpack(record)
             coords = json.decode(coords)
@@ -72,17 +83,21 @@ function HiddenGemsMap:new()
             row.range = range
             Vars.gems[id] = row
         end
+
+        -- Load shards filter data from the database
         for record in db:rows('SELECT lockey FROM shards') do
             local lockey = table.unpack(record)
             table.insert(Vars.lockeys, lockey)
         end
+
+        -- Load items filter data from the database
         for record in db:rows('SELECT tdbid FROM items') do
             local tdbid = table.unpack(record)
             table.insert(Vars.tdbids, tostring(TweakDBID(tdbid)))
         end
     end
 
-    ---comment
+    --- Updates and filter the player's codex, inventory and stash current state
     function HiddenGemsMap.update()
         local success
         local data = CodexListSyncData.new()
@@ -92,12 +107,12 @@ function HiddenGemsMap:new()
         Vars.stash = {}
         Vars.shards = CodexUtils.GetShardsDataArray(GameInstance.GetJournalManager(), data)
         Logging.log(string.format('Found %s shards in codex.', #Vars.shards), 2)
-        Vars.shards = Utils.filterShards(Vars.shards)
+        Vars.shards = Utils.filterShards(Vars.lockeys, Vars.shards)
         Logging.log(string.format('Filtered %s shards in codex.', #Vars.shards), 2)
         success, Vars.inventory = Game.GetTransactionSystem():GetItemList(Game.GetPlayer())
         if (success) then
             Logging.log(string.format('Found %s items in inventory.', #Vars.inventory), 2)
-            Vars.inventory = Utils.filterItems(Vars.inventory)
+            Vars.inventory = Utils.filterItems(Vars.tdbids, Vars.inventory)
             Logging.log(string.format('Filtered %s items in inventory.', #Vars.inventory), 2)
         else
             Logging.log('Fail to obtain items in inventory.', 2)
@@ -105,14 +120,14 @@ function HiddenGemsMap:new()
         success, Vars.stash = Game.GetTransactionSystem():GetItemList(stash)
         if (success) then
             Logging.log(string.format('Found %s items in stash.', #Vars.stash), 2)
-            Vars.stash = Utils.filterItems(Vars.stash)
+            Vars.stash = Utils.filterItems(Vars.tdbids, Vars.stash)
             Logging.log(string.format('Filtered %s items in stash.', #Vars.stash), 2)
         else
             Logging.log('Fail to obtain items in stash.', 2)
         end
     end
 
-    ---comment
+    --- Resumes map refresh routines
     function HiddenGemsMap.resume()
         if self.reloaded then
             self.update()
@@ -142,7 +157,7 @@ function HiddenGemsMap:new()
         Logging.console('Resumed rotines.', 2)
     end
 
-    ---comment
+    --- Pauses map refresh routines
     function HiddenGemsMap.pause()
         Logging.console('Pausing rotines.', 2)
         for _, timer in pairs(Vars.timers) do
@@ -154,7 +169,7 @@ function HiddenGemsMap:new()
         Logging.console('Paused rotines.', 2)
     end
 
-    ---comment
+    --- Initializes routines and manages UI triggered events
     registerForEvent('onInit', function()
         self.loadData()
         Vars.logname = self.logname
@@ -206,13 +221,13 @@ function HiddenGemsMap:new()
         end
     end)
 
-    ---comment
+    --- Updates Cron module current state
     registerForEvent('onUpdate', function(delta)
          -- This is required for Cron to function
         Cron.Update(delta)
     end)
 
-    ---comment
+    --- Executes shutdown cleanup routines
     registerForEvent('onShutdown', function()
         Manager.clearPins()
         Logging.conclude('Closing log...')

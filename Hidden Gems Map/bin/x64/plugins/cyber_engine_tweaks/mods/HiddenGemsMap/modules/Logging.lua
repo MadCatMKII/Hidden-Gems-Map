@@ -2,7 +2,7 @@ local Vars = require('modules/Vars')
 
 local Logging = {}
 
----comment
+--- Logs a message
 ---@param message string
 ---@return string
 function Logging.format(message)
@@ -10,7 +10,7 @@ function Logging.format(message)
     return string.format('[Hidden Gems Map] %02d:%02d:%02d: %s\n', time.hour, time.min, time.sec, message)
 end
 
----comment
+--- Creates a log file overwriting a existing one
 function Logging.create(message)
     local logfile = io.open(Vars.logname, 'w')
     if logfile ~= nil then
@@ -19,7 +19,7 @@ function Logging.create(message)
     end
 end
 
----comment
+--- Concludes a log file
 function Logging.conclude(message)
     local logfile = io.open(Vars.logname, 'a')
     if logfile ~= nil then
@@ -28,7 +28,7 @@ function Logging.conclude(message)
     end
 end
 
----comment
+--- Logs a message and appends it to the log file according to debug level
 ---@param message string
 ---@param level integer
 function Logging.log(message, level)
@@ -42,7 +42,7 @@ function Logging.log(message, level)
     end
 end
 
----comment
+--- Logs a message according to debug level
 ---@param message string
 ---@param level integer
 function Logging.console(message, level)

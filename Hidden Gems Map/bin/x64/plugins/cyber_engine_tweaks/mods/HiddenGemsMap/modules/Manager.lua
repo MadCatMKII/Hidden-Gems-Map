@@ -5,46 +5,46 @@ local Vars = require('modules/Vars')
 
 local Manager = {}
 
----comment
----@param row any
-function Manager.createPin(row)
+--- Creates the pin for a hidden gem on the map
+---@param gem any
+function Manager.createPin(gem)
 	local pin = {}
 	local data = NewObject('gamemappinsMappinData')
-	Logging.log(string.format('Pin creation -> %s -> %s', row.tag, row.position), 3)
+	Logging.log(string.format('Pin creation -> %s -> %s', gem.tag, gem.position), 3)
 	data.mappinType = TweakDBID.new('Mappins.DefaultStaticMappin')
-	data.variant = Enum.new('gamedataMappinVariant', row.typemap)
+	data.variant = Enum.new('gamedataMappinVariant', gem.typemap)
     data.visibleThroughWalls = true
-	pin.id = Game.GetMappinSystem():RegisterMappin(data, row.position)
+	pin.id = Game.GetMappinSystem():RegisterMappin(data, gem.position)
 	Game.GetMappinSystem():SetMappinActive(pin.id, true)
-	pin.tag = row.tag
-	pin.position = row.position
-	pin.variant =  row.typemap
-	pin.range = row.range
+	pin.tag = gem.tag
+	pin.position = gem.position
+	pin.variant =  gem.typemap
+	pin.range = gem.range
 	pin.active =  true
-	pin.title = row.title
-	pin.desc = row.desc
+	pin.title = gem.title
+	pin.desc = gem.desc
 	pin.style = {}
 	pin.style.color = Vars.color
-	pin.style.icon = row.icon
+	pin.style.icon = gem.icon
 	Vars.pins[pin.tag] = pin
 	Logging.log(string.format('Pin created -> %s -> %s', pin.tag, pin.title), 3)
 end
 
----comment
+--- Gets a pin by its tag identifier
 ---@param tag string
 ---@return any
 function Manager.getPinByTag(tag)
 	return Vars.pins[tag]
 end
 
----comment
+--- Checks a pin existence by its tag identifier
 ---@param tag string
 ---@return boolean
 function Manager.existPinbyTag(tag)
     return Vars.pins[tag] ~= nil
 end
 
----comment
+--- Removes a pin by its tag identifier
 ---@param tag string
 function Manager.removePinByTag(tag)
 	local pin = Manager.getPinByTag(tag)
@@ -54,7 +54,7 @@ function Manager.removePinByTag(tag)
 	Logging.log(string.format('Pin removed -> %s -> %s', pin.tag, pin.title), 3)
 end
 
----comment
+--- Validates if an expression is true
 ---@param expression any
 ---@return boolean
 function Manager.validateExpression(expression)
@@ -109,7 +109,7 @@ function Manager.validateExpression(expression)
     end
 end
 
----comment
+--- Updates the pin for a hidden gem on the map
 ---@param gem any
 function Manager.updatePin(gem, notify)
     local create = true
@@ -142,14 +142,14 @@ function Manager.updatePin(gem, notify)
     Logging.log(string.format('Check concluded -> %s -> %s', gem.title, gem.tag), 4)
 end
 
----comment
+--- Updates all pins for hidden gems on the map
 function Manager.updatePins()
     for _, gem in pairs(Vars.gems) do
         Manager.updatePin(gem, false)
     end
 end
 
----comment
+--- Schedules updates to all pins for hidden gems on the map
 function Manager.schedulePins()
     local unit = (Vars.settings.frequency - 0.05) / #Vars.gems
     local delay = 0
@@ -166,7 +166,7 @@ function Manager.schedulePins()
     Vars.timers = timers
 end
 
----comment
+--- Clears all pins for hidden gems on the map
 function Manager.clearPins()
     Vars.clear = true
     for _, timer in pairs(Vars.timers) do
